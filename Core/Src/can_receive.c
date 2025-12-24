@@ -140,25 +140,29 @@ HAL_StatusTypeDef CAN_Send_Projectile_Hit(CAN_HandleTypeDef *hcan, uint8_t proje
 
 
 
-void ProjectileHit_Process(CAN_HandleTypeDef *hcan) {
-    BALL ball_type = adc_detect_get_valid_ball();
-		
-    // 根据类型发送CAN消息
-    switch (ball_type) {
-        case BALL_SMALL:
-            // 发送小弹丸标识：0x04
-						CAN_Send_Projectile_Hit(hcan, PROJECTILE_SMALL);
-            break;
-        case BALL_LARGE:
-            // 发送大弹丸标识：0x09
-            CAN_Send_Projectile_Hit(hcan, PROJECTILE_LARGE);
-            break;
-        case BALL_NONE:
-        default:
-            // 无有效击打，不发送CAN
-            break;
+void ProjectileHit_Process(CAN_HandleTypeDef *hcan)
+{
+    while (1)
+    {
+        BALL ball_type = adc_detect_get_valid_ball();  // 队列pop一次
+        if (ball_type == BALL_NONE) break;             // 队列空就退出
+
+        switch (ball_type)
+        {
+            case BALL_SMALL:
+                CAN_Send_Projectile_Hit(hcan, PROJECTILE_SMALL); // 0x04
+                break;
+
+            case BALL_LARGE:
+                CAN_Send_Projectile_Hit(hcan, PROJECTILE_LARGE); // 0x09
+                break;
+
+            default:
+                break;
+        }
     }
 }
+
 void CAN_Task_Poll(void)
 {
    

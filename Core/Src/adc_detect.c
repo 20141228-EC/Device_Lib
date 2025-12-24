@@ -1,15 +1,19 @@
 #include "adc_detect.h"
 extern volatile uint8_t g_armor_r, g_armor_g, g_armor_b;
-/* ================== 默认可调参数（你主要就改这里） ================== */
+/* ================== 参数 ================== */
 #define HIT_BLINK_COUNT   2U
 #define HIT_ON_MS         40U
 #define HIT_OFF_MS        40U
-static float baseline_f[CHANNEL_NUM];   // 浮点基线，避免抖动
-static uint8_t baseline_f_inited = 0;
+/* 浮点基线用于 IIR 跟随：
+    - 使用浮点可以避免小幅抖动在整数运算中的舍入误差
+    - `baseline_f` 保存当前的浮点基线估计，`baseline_f_inited` 标志是否已被第一次初始化
+*/
+static float baseline_f[CHANNEL_NUM];   // 浮点基线缓冲（与 adc_base.baseline 对应）
+static uint8_t baseline_f_inited = 0;   // 0: 未初始化，1: 已初始化
 ADC_Detect_Config_t adc_detect_cfg = {
     .gain = { 1.0f, 1.0f, 1.0f, 1.0f },
 
-    /* 这三个阈值需要你根据实际差分电压来调 */
+    /* 根据实际差分电压来调 */
     .small_v_min = 0.6f,
     .small_v_max = 1.6f,
     .large_v_min = 1.6f,
@@ -57,8 +61,8 @@ void ws2812_hit_blink_blue_twice(WS2812_Device_t *dev)
     uint8_t save_g = g_armor_g;
     uint8_t save_b = g_armor_b;
 
-    /* 如果你在别处用 ws2812_pause_flag 避免影响 ADC，
-       这里保存并临时放行显示（否则 send() 会直接 return） */
+    /* 如果在别处用 ws2812_pause_flag 避免影响 ADC，
+    这里保存并临时放行显示（否则 send() 会直接 return） */
     uint8_t old_pause = ws2812_pause_flag;
     ws2812_pause_flag = 0;
 
@@ -88,20 +92,30 @@ static float adc_to_voltage(uint16_t adc)
 
 static void capture_baseline(uint16_t cnt)
 {
+    /*
+     * 采样计数为 `cnt`，通过多次读取 ADC DMA 缓冲并累加求平均。
+     */
     uint32_t sum[CHANNEL_NUM] = {0};
 
-    HAL_Delay(20); // 等待 ADC DMA 稳定
+    /* 等待短暂时间让 ADC/DMA 稳定（例如刚启动 ADC 后需时间） */
+    HAL_Delay(20);
 
+    /* 连续读取 cnt 次，每次把各通道当前的 ADC 值累加到 sum */
     for (uint16_t i = 0; i < cnt; i++) {
         for (uint8_t ch = 0; ch < CHANNEL_NUM; ch++) {
+            /* adc_dma_buf[ch]：来自 DMA 的最新 ADC 原始码 */
             sum[ch] += adc_dma_buf[ch];
         }
+        /* 每次读之间短延时，避免总是读到同一次转换的数据 */
         HAL_Delay(1);
     }
 
+    /* 用累计和除以样本数，得到整数基线值，写入 adc_base.baseline */
     for (uint8_t ch = 0; ch < CHANNEL_NUM; ch++) {
         adc_base.baseline[ch] = (uint16_t)(sum[ch] / cnt);
     }
+
+    /* 标记基线已准备好，后续检测可以使用该基线 */
     adc_base.baseline_ready = 1;
 }
 
@@ -158,32 +172,41 @@ void adc_detect_init(void)
 static void baseline_follow_when_quiet(void)
 {
     if (!adc_base.baseline_ready) return;
-
-    // 触发后留一点恢复时间，避免把“敲击残波”学进基线
+    /*
+     * 防止把刚发生的敲击残波学进基线：只有在距离上次触发有足够恢复时间时才跟随。
+     * 这里使用 80ms 的恢复窗（经验值），可根据需要调整。
+     */
     uint32_t now = HAL_GetTick();
     if (now - adc_detect_state.last_trigger < 80) return;
 
+    /* 计算当前各通道的差分电压（绝对值） */
     float vdiff[CHANNEL_NUM];
     adc_detect_get_vdiff(vdiff);
 
-    // 安静判定阈值：比你最小触发阈值小很多（比如 0.01~0.03V）
+    /* 判定是否处于“安静”状态：所有通道的 vdiff 都非常小（例如 < 0.02V）
+       这里阈值选择比最小触发阈值要小很多，以避免误将微小触发学进基线 */
     bool quiet = true;
     for (uint8_t ch = 0; ch < CHANNEL_NUM; ch++) {
         if (vdiff[ch] > 0.02f) { quiet = false; break; }
     }
-    if (!quiet) return;
+    if (!quiet) return; // 非安静时不更新基线
 
-    // 初始化浮点基线
+    /* 如果浮点基线尚未初始化，使用当前整数基线做初始值 */
     if (!baseline_f_inited) {
-        for (uint8_t ch = 0; ch < CHANNEL_NUM; ch++) baseline_f[ch] = (float)adc_base.baseline[ch];
+        for (uint8_t ch = 0; ch < CHANNEL_NUM; ch++)
+            baseline_f[ch] = (float)adc_base.baseline[ch];
         baseline_f_inited = 1;
     }
 
-    // IIR：alpha 越小，跟随越慢（更不容易把噪声学进去）
-    const float alpha = 0.002f; // 你可以试 0.001~0.01
+    /* 使用一阶 IIR（指数移动平均）更新浮点基线：
+       baseline_f += alpha * (cur - baseline_f)
+       alpha 越小跟随越慢（更鲁棒但响应慢），alpha=0.002 是经验值 */
+    const float alpha = 0.005f; // 可调范围 0.001 ~ 0.01
     for (uint8_t ch = 0; ch < CHANNEL_NUM; ch++) {
         float cur = (float)adc_dma_buf[ch];
         baseline_f[ch] += alpha * (cur - baseline_f[ch]);
+
+        /* 把浮点基线转换回整数存入主基线数组，+0.5f 用于四舍五入 */
         adc_base.baseline[ch] = (uint16_t)(baseline_f[ch] + 0.5f);
     }
 }
@@ -246,7 +269,7 @@ void adc_detect_process(WS2812_Device_t *dev)
         }
     } else {
         debouncing = false;
-				baseline_follow_when_quiet();
+		baseline_follow_when_quiet();
     }
 }
 

@@ -38,7 +38,7 @@ I (../Core/Inc/spi.h)(0x690AC699)
 I (../Core/Inc/gpio.h)(0x690AC698)
 I (../Core/Inc/ws2812.h)(0x693E68DD)
 I (D:\keil5\core\ARM\ARMCC\include\string.h)(0x6025237E)
-I (../Core/Inc/adc_detect.h)(0x693D1EC1)
+I (../Core/Inc/adc_detect.h)(0x6949095E)
 I (D:\keil5\core\ARM\ARMCC\include\stdbool.h)(0x6025237C)
 I (D:\keil5\core\ARM\ARMCC\include\stdlib.h)(0x60252374)
 I (../Core/Inc/can_receive.h)(0x69453307)
@@ -141,7 +141,7 @@ I (../Core/Inc/gpio.h)(0x690AC698)
 I (../Core/Inc/spi.h)(0x690AC699)
 I (../Core/Inc/ws2812.h)(0x693E68DD)
 I (D:\keil5\core\ARM\ARMCC\include\string.h)(0x6025237E)
-I (../Core/Inc/adc_detect.h)(0x693D1EC1)
+I (../Core/Inc/adc_detect.h)(0x6949095E)
 I (D:\keil5\core\ARM\ARMCC\include\stdbool.h)(0x6025237C)
 I (D:\keil5\core\ARM\ARMCC\include\stdlib.h)(0x60252374)
 F (../Core/Src/dma.c)(0x692EC83F)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_armored_plate-ID:\keil5\pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-ID:\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o "armored plate\dma.o" --omf_browse "armored plate\dma.crf" --depend "armored plate\dma.d")
@@ -763,9 +763,9 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h)(0x68A6798C)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x68A6798C)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h)(0x68A6798C)
 I (D:\keil5\core\ARM\ARMCC\include\string.h)(0x6025237E)
-F (..\Core\Inc\adc_detect.h)(0x693D1EC1)()
-F (..\Core\Src\adc_detect.c)(0x6943A72B)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_armored_plate-ID:\keil5\pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-ID:\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o "armored plate\adc_detect.o" --omf_browse "armored plate\adc_detect.crf" --depend "armored plate\adc_detect.d")
-I (../Core/Inc/adc_detect.h)(0x693D1EC1)
+F (..\Core\Inc\adc_detect.h)(0x6949095E)()
+F (..\Core\Src\adc_detect.c)(0x69491A24)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_armored_plate-ID:\keil5\pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-ID:\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o "armored plate\adc_detect.o" --omf_browse "armored plate\adc_detect.crf" --depend "armored plate\adc_detect.d")
+I (../Core/Inc/adc_detect.h)(0x6949095E)
 I (D:\keil5\core\ARM\ARMCC\include\stdbool.h)(0x6025237C)
 I (D:\keil5\core\ARM\ARMCC\include\stdint.h)(0x6025237E)
 I (D:\keil5\core\ARM\ARMCC\include\string.h)(0x6025237E)
@@ -799,7 +799,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h)(0x68A6798C)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x68A6798C)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h)(0x68A6798C)
 I (../Core/Inc/ws2812.h)(0x693E68DD)
-F (..\Core\Src\can_receive.c)(0x69453307)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_armored_plate-ID:\keil5\pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-ID:\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o "armored plate\can_receive.o" --omf_browse "armored plate\can_receive.crf" --depend "armored plate\can_receive.d")
+F (..\Core\Src\can_receive.c)(0x6949092D)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_armored_plate-ID:\keil5\pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-ID:\keil5\pack\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o "armored plate\can_receive.o" --omf_browse "armored plate\can_receive.crf" --depend "armored plate\can_receive.d")
 I (../Core/Inc/can_receive.h)(0x69453307)
 I (../Core/Inc/can.h)(0x690AC699)
 I (../Core/Inc/main.h)(0x690AC69A)
@@ -835,7 +835,7 @@ I (../Core/Inc/gpio.h)(0x690AC698)
 I (../Core/Inc/spi.h)(0x690AC699)
 I (../Core/Inc/ws2812.h)(0x693E68DD)
 I (D:\keil5\core\ARM\ARMCC\include\string.h)(0x6025237E)
-I (../Core/Inc/adc_detect.h)(0x693D1EC1)
+I (../Core/Inc/adc_detect.h)(0x6949095E)
 I (D:\keil5\core\ARM\ARMCC\include\stdbool.h)(0x6025237C)
 I (D:\keil5\core\ARM\ARMCC\include\stdlib.h)(0x60252374)
 F (..\Core\Inc\can_receive.h)(0x69453307)()
